@@ -1,20 +1,8 @@
-import {Calendar, dateFnsLocalizer} from 'react-big-calendar'
-import {parse, format, startOfWeek, getDay, addHours} from 'date-fns'
-import {enUS} from 'date-fns/locale'
-import {NavBar} from '@/calendar/index.js'
+import {Calendar} from 'react-big-calendar'
+import {addHours} from 'date-fns'
+import {CalendarEvent, NavBar} from '@/calendar'
+import {localizer} from '@/helpers'
 import 'react-big-calendar/lib/css/react-big-calendar.css'
-
-const locales = {
-  'en-US': enUS,
-}
-
-const localizer = dateFnsLocalizer({
-  format,
-  parse,
-  startOfWeek,
-  getDay,
-  locales
-})
 
 const events = [{
   title: 'My event',
@@ -29,10 +17,46 @@ const events = [{
 }]
 
 export const CalendarPage = () => {
+  const eventStyleGetter = (event, start, end, isSelected) => {
+    const style = {
+      backgroundColor: '#347cf7',
+      borderRadius: '0px',
+      opacity: 0.8,
+      color: '#fff'
+    }
+    return{
+      style
+    }
+  }
+
+  const onDoubleClick = (event) => {
+    console.log({doubleClick: event})
+  }
+  const onSelect = (event) => {
+    console.log({click: event})
+  }
+  const onViewChanged = (event) => {
+    console.log({viewChanged: event})
+  }
+
   return (
     <>
-      <NavBar />
-      <Calendar localizer={localizer} events={events} startAccessor='start' endAccessor='end' style={{height: 'calc(100vh - 80px)'}} />
+      <NavBar/>
+      <Calendar
+        localizer={localizer}
+        events={events}
+        defaultView='month'
+        startAccessor="start"
+        endAccessor="end"
+        style={{height: 'calc(100vh - 80px)'}}
+        eventPropGetter={eventStyleGetter}
+        onDoubleClickEvent={onDoubleClick}
+        onSelectEvent={onSelect}
+        onView={onViewChanged}
+        components={{
+          event: CalendarEvent
+        }}
+      />
     </>
   )
 }
